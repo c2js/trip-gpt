@@ -1,0 +1,130 @@
+/* .chatbot-container {
+  height: 100%;
+}
+
+.chat-history {
+  flex: 1;
+  overflow-y: scroll;
+  padding: 10px;
+  background-color: #fff;
+  height: 85%;
+}
+
+.message {
+  border-radius: 10px;
+  padding: 10px;
+  margin-bottom: 10px;
+}
+
+.message.user {
+  background-color: #4CAF50;
+  color: #fff;
+  text-align: right;
+  width: 80%;
+  margin-left: auto;
+}
+
+.message.bot {
+  background-color: #e0f2ff;
+  color: #000;
+  text-align: left;
+  width: 90%;
+  margin-right: auto;
+}
+
+.message-box {
+  display: flex;
+  align-items: center;
+  padding: 10px;
+  width: 100%;
+}
+
+.message-input {
+  flex: 1;
+  margin-right: 10px;
+  padding: 5px;
+  font-size: 16px;
+}
+
+.send-btn, .reset-btn {
+  background-color: #008CBA;
+  color: #fff;
+  border: none;
+  padding: 10px;
+  font-size: 16px;
+  cursor: pointer;
+  }
+  
+.reset-btn {
+  background-color: #f44336;
+}
+  
+   */
+
+   
+   .chatbot-container {
+    height: 100%;
+    display: flex;
+    flex-direction: column;
+  }
+  
+  .chat-history {
+    flex: 1;
+    overflow-y: scroll;
+    padding: 10px;
+    background-color: #fff;
+    padding-bottom: 10%;
+  }
+  
+  .message {
+    border-radius: 10px;
+    padding: 10px;
+    margin-bottom: 10px;
+  }
+  
+  .message.user {
+    background-color: #4CAF50;
+    color: #fff;
+    text-align: right;
+    width: 80%;
+    margin-left: auto;
+  }
+  
+  .message.bot {
+    background-color: #e0f2ff;
+    color: #000;
+    text-align: left;
+    width: 90%;
+    margin-right: auto;
+  }
+  
+  .message-box {
+    display: flex;
+    align-items: center;
+    padding: 10px;
+    width: 95%;
+    bottom: 0;
+    background-color: #fff;
+  }
+  
+  .message-input {
+    flex: 1;
+    margin-right: 10px;
+    padding: 5px;
+    font-size: 16px;
+    box-sizing: border-box;
+  }
+  
+  .send-btn, .reset-btn {
+    background-color: #008CBA;
+    color: #fff;
+    border: none;
+    padding: 10px;
+    font-size: 16px;
+    cursor: pointer;
+  }
+  
+  .reset-btn {
+    background-color: #f44336;
+  }
+  
