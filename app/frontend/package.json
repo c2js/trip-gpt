@@ -13,7 +13,11 @@
     "azure-maps-control": "^2.2.6",
     "azure-maps-rest": "^2.1.0",
     "react-azure-maps": "^0.4.5",
-    "react-markdown": "^8.0.6"
+    "react-markdown": "^8.0.6",
+    "@mui/material": "^5.12.0",
+    "@mui/icons-material":"^5.11.16",
+    "@emotion/react": "^11.10.6",
+    "@emotion/styled": "^11.10.6"
   },
   "scripts": {
     "start": "react-scripts start",

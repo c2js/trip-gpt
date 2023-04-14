@@ -1,6 +1,12 @@
 import React, { useState, useEffect, useRef, useContext } from 'react';
 import DataContext from '../DataContext';
 import ReactMarkdown from 'react-markdown';
+import CleaningServicesTwoToneIcon from '@mui/icons-material/CleaningServicesTwoTone';
+import SendTwoToneIcon from '@mui/icons-material/SendTwoTone';
+import Button from '@mui/material/Button';
+import IconButton from '@mui/material/IconButton';
+
+
 import './Chatbot.css';
 
 const Chatbot = () => {
@@ -25,7 +31,7 @@ const Chatbot = () => {
     setMessage('');
     
     const response = await fetch(process.env.REACT_APP_BACKEND_ENDPOINT, {
-      //mode: 'cors', 
+      //mode: 'no-cors', 
       method: 'POST',
       headers: {
         'Content-Type': 'application/json'
@@ -74,19 +80,26 @@ const Chatbot = () => {
           <div ref={inputRef}></div>
           
       </div>
+    
       <div className="message-box">
-        <textarea
-          type="text"
-          placeholder="Type your message here..."
-          value={message}
-          onChange={(e) => setMessage(e.target.value) }
-          onKeyDown={handleKeyDown}
-          className="message-input"
-        />
-        
-        <button className="send-btn" onClick={sendMessage}>Send</button>
-        <button className="reset-btn" onClick={() => {setHistory([]); setPOI({}) }  }>Reset</button>
-      </div>
+        <IconButton aria-label="delete" size="large" color="error" onClick={() => {setHistory([]); setPOI({}) }  }>
+          <CleaningServicesTwoToneIcon />
+        </IconButton>
+
+        <div className="messagediv">
+          <textarea
+            type="text"
+            placeholder="Type your message here..."
+            value={message}
+            onChange={(e) => setMessage(e.target.value) }
+            onKeyDown={handleKeyDown}
+            className="message-input"
+          />
+          <IconButton aria-label="Send" size="large" color="success" onClick={sendMessage} className='send-icon'> 
+              <SendTwoToneIcon />
+          </IconButton>
+        </div>
+    </div>
     </div>
   );
 };

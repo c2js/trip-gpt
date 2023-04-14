@@ -1,4 +1,4 @@
-import React, {useContext} from 'react'
+import React, {useContext, useEffect} from 'react'
 import './TripAzureMap.css';
 import {AzureMap, AzureMapsProvider, AzureMapHtmlMarker, AzureMapPopup, AzureMapsContext } from 'react-azure-maps'
 import {AuthenticationType} from 'azure-maps-control'
@@ -13,7 +13,7 @@ const option = {
       zoom: 10
 }
 
-const JhAzureMap = () => {
+const TripAzureMap = () => {
     
     const { mapRef, isMapReady } = useContext(AzureMapsContext);
     const { poi, setPOI } = useContext(DataContext);
@@ -22,6 +22,28 @@ const JhAzureMap = () => {
     console.log ({...poi} );
     console.log(`poi.is_end :${poi.is_end}`);
     
+    useEffect(() => {
+        if (isMapReady && mapRef) {
+          mapRef.setCamera({ 
+            center: [100,100],
+            zoom: 7
+        });
+    }
+    }, [isMapReady]);
+
+
+    useEffect(() => {
+
+        if (isMapReady && mapRef && poi && 'pois' in poi) {
+            const lon = poi.pois[0].lon
+            const lat = poi.pois[0].lat
+            mapRef.setCamera({ 
+                center: [lon, lat],
+                zoom: 11
+        });
+    }
+    }, [poi]);
+
 
     let markers = []
     if (poi && 'pois' in poi) {
@@ -38,7 +60,7 @@ const JhAzureMap = () => {
 
     let memoizedMapPopup = null
     if (poi && 'pois' in poi) {
-    memoizedMapPopup = poi.pois.map((item, index) => (
+        memoizedMapPopup = poi.pois.map((item, index) => (
             <AzureMapPopup
                 isVisible={true}
                 options={ { position: [ item.lon, item.lat ] , pixelOffset: [0,-30]} } 
@@ -54,25 +76,22 @@ const JhAzureMap = () => {
 
     return (
         <div id="map">
+            <AzureMap options={option}>
+                
+            {memoizedMapPopup}
+            {markers.map((marker) => (
+                    <AzureMapHtmlMarker
+                        key={marker.key}
+                        options={marker.options}
+                        onClick={() => onMarkerClick(marker)}
+                        
+                    />
+                ))}
 
-            <AzureMapsProvider>
-                <AzureMap options={option}>
-                   
-                {memoizedMapPopup}
-                {markers.map((marker) => (
-                        <AzureMapHtmlMarker
-                            key={marker.key}
-                            options={marker.options}
-                            onClick={() => onMarkerClick(marker)}
-                            
-                        />
-                    ))}
-
-                </AzureMap>
-            </AzureMapsProvider>
+            </AzureMap>
         </div>
     );
 }
-export default JhAzureMap
+export default TripAzureMap
 
 
