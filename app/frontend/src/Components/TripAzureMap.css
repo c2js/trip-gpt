@@ -2,3 +2,21 @@
     width: 100%;
     height: 100%;
 }
+.poi-popup {
+  padding: 10px;
+  font-size: 12px;
+  line-height: 1.5;
+  max-width: 300px;
+}
+
+.poi-popup h4 {
+  margin: 0 0 10px;
+}
+
+.poi-popup p {
+  margin: 0 0 5px;
+}
+
+.poi-popup strong {
+  font-weight: bold;
+}

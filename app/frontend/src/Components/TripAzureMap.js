@@ -64,7 +64,17 @@ const TripAzureMap = () => {
             <AzureMapPopup
                 isVisible={true}
                 options={ { position: [ item.lon, item.lat ] , pixelOffset: [0,-30]} } 
-                popupContent={<div style={{padding:"10px"}}>{item.name}</div>}
+                //popupContent={<div style={{padding:"10px"}}>{item.name}</div>}
+                popupContent={
+                    <div className="poi-popup">
+                        <h4>{item.name}</h4>
+                        {item.addr_street_number && item.addr_street_name && <p><strong>Address:</strong> {item.addr_street_number} {item.addr_street_name} {item.city}</p> }
+                        {item.lat && item.lon && <p><strong>Geo (lat,long):</strong> {item.lat}, {item.lon}</p> }
+                        {item.phone && <p><strong>Phone:</strong> {item.phone}</p>}
+                        {item.url && <p><strong>Website:</strong> <a href={item.url} target="_blank">{item.url}</a></p>}
+                    </div>
+
+                }
             />
         ));
     }

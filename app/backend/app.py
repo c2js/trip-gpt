@@ -221,7 +221,7 @@ def chat():
                     poiinfo.append({'poi': querypoi, 'lat': r.position.lat, 'lon': r.position.lon, 'addr_street_number': r.address.street_number , 'addr_street_name': r.address.street_name, 
                                     'city': r.address.municipality, 'country': r.address.country_code, 'zip': r.address.postal_code, 
                                     'url': r.point_of_interest.url,
-                                    'phone:' : r.point_of_interest.phone,
+                                    'phone' : r.point_of_interest.phone,
                                     'name': r.point_of_interest.name,
                                     })
                 except Exception as e:
