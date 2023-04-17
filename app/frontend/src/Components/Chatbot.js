@@ -3,7 +3,6 @@ import DataContext from '../DataContext';
 import ReactMarkdown from 'react-markdown';
 import CleaningServicesTwoToneIcon from '@mui/icons-material/CleaningServicesTwoTone';
 import SendTwoToneIcon from '@mui/icons-material/SendTwoTone';
-import Button from '@mui/material/Button';
 import IconButton from '@mui/material/IconButton';
 
 
@@ -82,14 +81,14 @@ const Chatbot = () => {
       </div>
     
       <div className="message-box">
-        <IconButton aria-label="delete" size="large" color="error" onClick={() => {setHistory([]); setPOI({}) }  }>
+        <IconButton aria-label="delete" size="large" color="error" onClick={() => {setHistory([]); setPOI({}); setLoading(false) }  }>
           <CleaningServicesTwoToneIcon />
         </IconButton>
 
         <div className="messagediv">
           <textarea
             type="text"
-            placeholder="Type your message here..."
+            placeholder="Which city you want to go? How many day? In which month ? ... "
             value={message}
             onChange={(e) => setMessage(e.target.value) }
             onKeyDown={handleKeyDown}

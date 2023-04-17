@@ -150,7 +150,7 @@ def chat():
         keywords = ["Weather", "Note", "Itinerary", "Day"]
         
 
-        found_keywords = {} #{"Weather":False, "Note":False, "Itinerary":False, "Day":False }
+        found_keywords = {}
         for word in keywords:
             if word in assist_content:
                 found_keywords[word] = True
@@ -158,7 +158,8 @@ def chat():
                 break
         
         if (found_keywords and all(found_keywords.values())):
-
+            print ("found itinenary, prepare to extract pois")
+            print (f"Assist Content:{assist_content}")
             # # detect it is an itinenary
             # iti = """ "Great! Here's your itinerary for your 3-day trip to Seattle in May:\n\n# Weather\n\nThe weather in May in Seattle is typically mild with temperatures 
             # ranging from 50\u00b0F (10\u00b0C) to 70\u00b0F (21\u00b0C).\n\n# Note\n\nHere are a few things to keep in mind about Seattle's 
@@ -184,7 +185,12 @@ def chat():
                     best_of=1,
                     stop=None)
             
+            #handle choices[0]["finish_reason"] "finish_reason": "content_filter"
+
+            print (f'Extract Prompt: {extract_prompt}')
             jsoniti = resp_iti['choices'][0]['text']
+            print (f'JSON Response: {resp_iti}')
+            print (f'JSON Itinerary: {jsoniti}')
             assistJson = json.loads(jsoniti)
 
             # if (headerJSON in assist_content or beginJSON in assist_content or endJSON in assist_content):

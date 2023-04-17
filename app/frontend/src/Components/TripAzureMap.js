@@ -73,8 +73,8 @@ const TripAzureMap = () => {
                         {item.phone && <p><strong>Phone:</strong> {item.phone}</p>}
                         {item.url && <p><strong>Website:</strong> <a href={item.url} target="_blank">{item.url}</a></p>}
                     </div>
-
                 }
+                key={index}
             />
         ));
     }
