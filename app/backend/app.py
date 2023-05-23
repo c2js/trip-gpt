@@ -2,6 +2,7 @@ import os
 import openai
 import json
 import re
+import requests
 from dotenv import load_dotenv
 from flask import Flask, request, jsonify
 from azure.maps.search import MapsSearchClient
@@ -50,51 +51,111 @@ def index():
 
 
 ## system meta
-meta_prompt = (
-    "Welcome to the travel itinerary planner!\n\n"
-    "Please provide the following information to generate your itinerary:\n\n"
-    "1. What is your destination city?\n"
-    "2. In which month are you planning to travel?\n"
-    "3. How many days will you be staying there?\n\n"
-    "Destination city: \n"
-    "Month of travel: \n"
-    "Number of days:\n"
-    "Preferences eg: hotels type, area of interests (optional)\n\n"
-    "Ask the user if the above information is not given.\n\n"
-    "Translate the numeric month to english, eg: 3 to March. Stay at the same hotel if possible unless travel to other city. "
-    "May suggest more than 1 attraction to fill up a day. Use 1 sentence or 2 to elaborate on [attractions, hotel and restaurant]. "
-    "Use markdown to bold (attractions name, hotels name and restaurants name) \n"
-    "Thank you! Here's your itinerary:\n\n"
-    "# Weather\n\n"
-    "The weather in {{month}} in {{city}} is typically {{weather}} {{temperature range}}.\n\n"
-    "# Note\n\nHere are a few things to keep in mind about {{city}}'s culture:\n\n"
-    "1. {{note1}}\n"
-    "2. {{note2}}\n"
-    "3. {{note3}}\n\n"
-    "# Itinerary\n\n"
-    "## Day n\n\n"
-    "- Attraction: {{attraction(s)}}\n"
-    "- Hotel: {{hotel}}\n"
-    "- Restaurant: {{restaurant1forlunch}} , {{restaurant2fordinner}}\n\n"
-    "## Day n+1\n\n"
-    "- Attraction: {{attraction(s)}}"
-    "\n- Hotel: {{hotel}}\n"
-    "- Restaurant: {{restaurant1forlunch}} , {{restaurant2fordinner}}\n\n"
-    "## Day n+2\n\n"
-    "- Attraction: {{attraction(s)}}\n"
-    "- Hotel: {{hotel}}\n"
-    "- Restaurant: {{restaurant1forlunch}} , {{restaurant2fordinner}}\n\n\n"
-    # "# JSON\n@@JSONSTART@@\n"
-    # "{\n  \"city\": \"{{city}}\",\n"
-    # "\"month\": \"{{month}}\",\n "
-    # "\"latlong\": \"{{latitude, longitude of city}}\",\n"
-    # "\"days\": {{days}},\n"
-    # "\"pref\": {{preferences}},\n"
-    # "\"all_poi\": [  \"{{attraction_n_day_n}}\", {{attraction_n+1_day_n}} \"{{hotel_n_day_n}}\", \"{{restaurant_n_day_n}}\" , "
-    # "\"{{restaurant_n+1_day_n}}\", \"{{attraction_n+1_day_n+1}}\", \"{{hotel_n+1_day_n+1}}\", \"{{restaurant_n+1_day_n+1}}\" ]\n}\n"
-    # "@@JSONEND@@\n\n"
+meta_prompt = """I am a city itinenary travel planner named YoYo who helps traveler to discover fun activities in city. 
+I *ONLY* answer question related to trip and itinerary planning. Reject kindly if the ask is not relevant to trip planning.
+Ask relevant questions to get the following answer to generate itinerary: 
 
-)
+- Destination city. (mandatory)
+- Month of travel. (mandatory)
+- Number of days be staying in the Destination city (mandatory)
+- Preferences eg: hotels type, area of interests (optional)
+
+Ask the user if the mandatory information is not given. Extract the above 3 information along the conversation. Suggest one city if user has no idea which city to go.
+
+Translate the numeric month to english, eg: 3 to March. Stay at the same hotel if possible unless travel to other city. May suggest more than 1 attraction to fill up a day. Use 1 sentence or 2 to elaborate on attractions, hotel and restaurant. 
+Confirmed the correctness with user when all three answers are gathered, after that generate the itinerary.
+Use markdown to bold (attractions name, hotels name and restaurants name). 
+The format of the itinenary following ITINENARY FORMAT:
+
+[BEGIN ITINENARY FORMAT]
+Thank you! Here's your itinerary:
+
+# Weather
+
+The weather in {{month}} in {{city}} is typically {{weather}} {{temperature range}}.
+
+# Note
+
+Here are a few things to keep in mind about {{city}}'s culture:
+
+1. {{note1}}
+2. {{note2}}
+3. {{note3}}
+
+# Itinerary
+
+## Day n
+
+- Attraction: {{attraction(s)}}
+- Hotel: {{hotel}}
+- Restaurant: {{restaurant1forlunch}} , {{restaurant2fordinner}}
+
+## Day n+1
+
+- Attraction: {{attraction(s)}}
+- Hotel: {{hotel}}
+- Restaurant: {{restaurant1forlunch}} , {{restaurant2fordinner}}
+
+## Day n+2
+
+- Attraction: {{attraction(s)}}
+- Hotel: {{hotel}}
+- Restaurant: {{restaurant1forlunch}} , {{restaurant2fordinner}}
+
+[END ITINENARY FORMAT]
+
+Your tasks in sequence are:
+1. Ask questions to get the 3 mandatory information which are Destination city, Month of travel, Number of days. 
+2. Confirm with user the 3 answers. 
+3. Generate the itinerary.
+"""
+
+
+# meta_prompt = (
+#     "Welcome to the travel itinerary planner!\n\n"
+#     "Please provide the following information to generate your itinerary:\n\n"
+#     "1. What is your destination city?\n"
+#     "2. In which month are you planning to travel?\n"
+#     "3. How many days will you be staying there?\n\n"
+#     "Destination city: \n"
+#     "Month of travel: \n"
+#     "Number of days:\n"
+#     "Preferences eg: hotels type, area of interests (optional)\n\n"
+#     "Ask the user if the above information is not given.\n\n"
+#     "Translate the numeric month to english, eg: 3 to March. Stay at the same hotel if possible unless travel to other city. "
+#     "May suggest more than 1 attraction to fill up a day. Use 1 sentence or 2 to elaborate on [attractions, hotel and restaurant]. "
+#     "Use markdown to bold (attractions name, hotels name and restaurants name) \n"
+#     "Thank you! Here's your itinerary:\n\n"
+#     "# Weather\n\n"
+#     "The weather in {{month}} in {{city}} is typically {{weather}} {{temperature range}}.\n\n"
+#     "# Note\n\nHere are a few things to keep in mind about {{city}}'s culture:\n\n"
+#     "1. {{note1}}\n"
+#     "2. {{note2}}\n"
+#     "3. {{note3}}\n\n"
+#     "# Itinerary\n\n"
+#     "## Day n\n\n"
+#     "- Attraction: {{attraction(s)}}\n"
+#     "- Hotel: {{hotel}}\n"
+#     "- Restaurant: {{restaurant1forlunch}} , {{restaurant2fordinner}}\n\n"
+#     "## Day n+1\n\n"
+#     "- Attraction: {{attraction(s)}}"
+#     "\n- Hotel: {{hotel}}\n"
+#     "- Restaurant: {{restaurant1forlunch}} , {{restaurant2fordinner}}\n\n"
+#     "## Day n+2\n\n"
+#     "- Attraction: {{attraction(s)}}\n"
+#     "- Hotel: {{hotel}}\n"
+#     "- Restaurant: {{restaurant1forlunch}} , {{restaurant2fordinner}}\n\n\n"
+#     # "# JSON\n@@JSONSTART@@\n"
+#     # "{\n  \"city\": \"{{city}}\",\n"
+#     # "\"month\": \"{{month}}\",\n "
+#     # "\"latlong\": \"{{latitude, longitude of city}}\",\n"
+#     # "\"days\": {{days}},\n"
+#     # "\"pref\": {{preferences}},\n"
+#     # "\"all_poi\": [  \"{{attraction_n_day_n}}\", {{attraction_n+1_day_n}} \"{{hotel_n_day_n}}\", \"{{restaurant_n_day_n}}\" , "
+#     # "\"{{restaurant_n+1_day_n}}\", \"{{attraction_n+1_day_n+1}}\", \"{{hotel_n+1_day_n+1}}\", \"{{restaurant_n+1_day_n+1}}\" ]\n}\n"
+#     # "@@JSONEND@@\n\n"
+
+# )
 
 @app.route('/chat', methods=['POST'])
 @cross_origin()
@@ -218,11 +279,10 @@ def chat():
             city_long = city_result_dict["position"]["lon"]
             
             for poi in all_poi:
+                querypoi = poi + ', ' + city
+                print (querypoi)
                 try:
-                    querypoi = poi + ', ' + city
-                    print (querypoi)
-
-                    result = maps_client.search_point_of_interest(querypoi, coordinates=(city_lat, city_long), radius_in_meters=20000, top=1)
+                    result = maps_client.search_point_of_interest(querypoi, coordinates=(city_lat, city_long), radius_in_meters=200000, top=1)
                     r = result.results[0]
                     poiinfo.append({'poi': querypoi, 'lat': r.position.lat, 'lon': r.position.lon, 'addr_street_number': r.address.street_number , 'addr_street_name': r.address.street_name, 
                                     'city': r.address.municipality, 'country': r.address.country_code, 'zip': r.address.postal_code, 
@@ -231,7 +291,7 @@ def chat():
                                     'name': r.point_of_interest.name,
                                     })
                 except Exception as e:
-                    print (f'error: {e}')
+                    print (f'error: {e}')                   
                     continue
 
             response['pois'] = poiinfo
@@ -246,4 +306,4 @@ def chat():
 
 
 if __name__ == '__main__':
-    app.run(debug=True)
+    app.run(debug=True, port=5005)

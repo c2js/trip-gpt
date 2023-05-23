@@ -25,8 +25,8 @@ const TripAzureMap = () => {
     useEffect(() => {
         if (isMapReady && mapRef) {
           mapRef.setCamera({ 
-            center: [100,100],
-            zoom: 7
+            center: [0,0],
+            zoom: 0
         });
     }
     }, [isMapReady]);
@@ -40,8 +40,21 @@ const TripAzureMap = () => {
             mapRef.setCamera({ 
                 center: [lon, lat],
                 zoom: 11
-        });
-    }
+            });
+        }
+
+        if (isMapReady && mapRef && poi && !('pois' in poi)) {
+
+            const cameraOptions = {
+                center: [0, 0],
+                zoom: 0,
+                bearing: 0,
+                duration: 2000
+              };
+            
+            mapRef.setCamera(cameraOptions);
+        }
+        
     }, [poi]);
 
 
