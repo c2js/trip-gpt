@@ -17,7 +17,7 @@ const TripAzureMap = () => {
     
     const { mapRef, isMapReady } = useContext(AzureMapsContext);
     const { poi, setPOI } = useContext(DataContext);
-    const [ isPopVisible, setIsPopVisible ]  = useState({});
+    const [ isAllPopVisible, setIsAllPopVisible ]  = useState(true);
     
     console.log(`jhazuremap`);
     console.log ({...poi} );
@@ -35,7 +35,7 @@ const TripAzureMap = () => {
 
     useEffect(() => {
 
-        if (isMapReady && mapRef && poi && 'pois' in poi) {
+        if (isMapReady && mapRef && poi && 'pois' in poi && poi.pois.length > 0) {
             const lon = poi.pois[0].lon
             const lat = poi.pois[0].lat
             mapRef.setCamera({ 
@@ -56,17 +56,6 @@ const TripAzureMap = () => {
             mapRef.setCamera(cameraOptions);
         }
 
-        if (poi && 'pois' in poi)
-        {
-            poi.pois.map((item, index) => {
-                isPopVisible[item.name] = false;
-            });
-            console.log(`isPopVisible: ${isPopVisible}`)
-        }
-        //mapPopup.current = mapPopup.current.slice(0, poi.length);
-
-     
-        
     }, [poi]);
 
 
@@ -95,7 +84,7 @@ const TripAzureMap = () => {
     if (poi && 'pois' in poi) {
         renderedPopUp = poi.pois.map((item, index) => (
             <AzureMapPopup
-                isVisible={ isPopVisible[item.name] }
+                isVisible={ isAllPopVisible }
                 options={ { position: [ item.lon, item.lat ] , pixelOffset: [0,-30]} } 
                 //popupContent={<div style={{padding:"10px"}}>{item.name}</div>}
                 popupContent={
@@ -108,79 +97,24 @@ const TripAzureMap = () => {
                     </div>
                 }
                 key={index}
-                //ref={(el) => (mapPopup.current.push(el))}
                 
             />
         ));
     }
 
-    // let renderedPopUp = null;
-    // if (poi && 'pois' in poi) {
-    //   renderedPopUp = poi.pois.map((item, index) => {
-    //     const ref = (el) => (mapPopup.current[index] = el);
-    //     const popupContent = (
-    //       <div className="poi-popup">
-    //         <h4>{item.name}</h4>
-    //         {item.addr_street_number && item.addr_street_name && (
-    //           <p>
-    //             <strong>Address:</strong> {item.addr_street_number} {item.addr_street_name} {item.city}
-    //           </p>
-    //         )}
-    //         {item.lat && item.lon && (
-    //           <p>
-    //             <strong>Geo (lat,long):</strong> {item.lat}, {item.lon}
-    //           </p>
-    //         )}
-    //         {item.phone && <p><strong>Phone:</strong> {item.phone}</p>}
-    //         {item.url && (
-    //           <p>
-    //             <strong>Website:</strong> <a href={addHttps(item.url)} target="_blank">{item.url}</a>
-    //           </p>
-    //         )}
-    //       </div>
-    //     );
     
-    //     return (
-    //       <AzureMapPopup
-    //         isVisible={true}
-    //         options={{ position: [item.lon, item.lat], pixelOffset: [0, -30] }}
-    //         popupContent={popupContent}
-    //         key={index}
-    //         ref={ref}
-    //       />
-    //     );
-    //   });
-    // }
 
-    //TODO
-
-    const [popVisible, setPopVisible] = useState(false);
-
-    const onClick = (e) => {
-        console.log('You click on: ', e);
-        console.log('You click on: ', e.target.options.visible);
-
-        isPopVisible[e.target.options.text] = !isPopVisible[e.target.options.text];
-        console.log(`isPopVisible: ${isPopVisible}`);
-        console.log(`isPopVisible: ${JSON.stringify(isPopVisible)}`);
-
-        // //e.target.options.visible = false;
-        // console.log(mapPopup);
-        // mapPopup.current.forEach((popup) => {
-        //     popup.isVisible = false;
-        //     console.log(popup.isVisible);
-        //   });
-        
-        
-        // setPopVisible(prevstate => !prevstate);
-        // console.log(`this is what: ${singleRef.current.options.visible}`);
+    const onToggleClick = () => {
+       setIsAllPopVisible(!isAllPopVisible)
         
     };
    
-    const eventToMarker = [{ eventName: 'click', callback: onClick }];
 
     return (
+        
         <div id="map">
+            <button onClick={onToggleClick} className="toggle-button" type="button" >Toggle Popups</button>
+            
             <AzureMap options={option}>
                 
             {renderedPopUp}
@@ -188,12 +122,10 @@ const TripAzureMap = () => {
                     <AzureMapHtmlMarker
                         key={marker.key}
                         options={marker.options}
-                        //events={ [ { eventName: 'click', callback: (e) => { console.log('You click on: ', e); } } ] }
-                        events={eventToMarker}
                     />
             )
             )}    
-
+{/* 
             <AzureMapHtmlMarker
                         key={ 'a3rsdfw4fsdf'}
                         options={ { 
@@ -201,12 +133,12 @@ const TripAzureMap = () => {
                             text: 'testsetset', 
                             position: [ 0,0 ],
                         } }
-                        events={eventToMarker}
+                        //events={eventToMarker}
             />
 
             <AzureMapPopup
                 key={ 'abcsdfeefef'}
-                isVisible={popVisible}
+                isVisible={isAllPopVisible}
                 options={ { position: [ 0, 0 ] , pixelOffset: [0,-30]} } 
 
                 popupContent={
@@ -218,8 +150,7 @@ const TripAzureMap = () => {
                         { <p><strong>Website:</strong> </p>}
                     </div>
                 }
-                
-            />
+            /> */}
 
             </AzureMap>
         </div>

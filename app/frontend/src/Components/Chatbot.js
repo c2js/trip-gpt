@@ -62,7 +62,10 @@ const Chatbot = () => {
       setShowWarning(true);
       chatInputRef.current.disabled = true;
       setSendBtnDisabled(true);
-      // TODO disable the button, enable reset
+      
+
+
+      // Handle call
     }
     else {
       setHistory(prevstate => [...prevstate, { role: 'assistant', content: botchat['choices'][0]['message']['content'] }]);

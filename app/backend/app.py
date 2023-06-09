@@ -282,7 +282,7 @@ def chat():
                 querypoi = poi + ', ' + city
                 print (querypoi)
                 try:
-                    result = maps_client.search_point_of_interest(querypoi, coordinates=(city_lat, city_long), radius_in_meters=200000, top=1)
+                    result = maps_client.search_point_of_interest(querypoi, coordinates=(city_lat, city_long), radius_in_meters=100000, top=1)
                     r = result.results[0]
                     poiinfo.append({'poi': querypoi, 'lat': r.position.lat, 'lon': r.position.lon, 'addr_street_number': r.address.street_number , 'addr_street_name': r.address.street_name, 
                                     'city': r.address.municipality, 'country': r.address.country_code, 'zip': r.address.postal_code, 
