@@ -1,7 +1,6 @@
-import React, {useContext, useEffect, useRef, useState} from 'react'
+import React, {useContext, useEffect, useState} from 'react'
 import './TripAzureMap.css';
-import {AzureMap, AzureMapsProvider, AzureMapHtmlMarker, AzureMapPopup, AzureMapsContext } from 'react-azure-maps'
-import {AuthenticationType} from 'azure-maps-control'
+import {AzureMap, AzureMapHtmlMarker, AzureMapPopup, AzureMapsContext } from 'react-azure-maps'
 import DataContext from '../DataContext';
 
 const option = {
@@ -30,7 +29,7 @@ const TripAzureMap = () => {
             zoom: 0
         });
     }
-    }, [isMapReady]);
+    }, [isMapReady, mapRef]);
 
 
     useEffect(() => {
@@ -56,7 +55,7 @@ const TripAzureMap = () => {
             mapRef.setCamera(cameraOptions);
         }
 
-    }, [poi]);
+    }, [poi, isMapReady, mapRef]);
 
 
     let markers = []
@@ -93,7 +92,7 @@ const TripAzureMap = () => {
                         {item.addr_street_number && item.addr_street_name && <p><strong>Address:</strong> {item.addr_street_number} {item.addr_street_name} {item.city}</p> }
                         {item.lat && item.lon && <p><strong>Geo (lat,long):</strong> {item.lat}, {item.lon}</p> }
                         {item.phone && <p><strong>Phone:</strong> {item.phone}</p>}
-                        {item.url && <p><strong>Website:</strong> <a href={addHttps(item.url)} target="_blank">{item.url}</a></p>}
+                        {item.url && <p><strong>Website:</strong> <a href={addHttps(item.url)} target="_blank" rel="noreferrer">{item.url}</a></p>}
                     </div>
                 }
                 key={index}
@@ -125,33 +124,6 @@ const TripAzureMap = () => {
                     />
             )
             )}    
-{/* 
-            <AzureMapHtmlMarker
-                        key={ 'a3rsdfw4fsdf'}
-                        options={ { 
-                            color: 'blue', 
-                            text: 'testsetset', 
-                            position: [ 0,0 ],
-                        } }
-                        //events={eventToMarker}
-            />
-
-            <AzureMapPopup
-                key={ 'abcsdfeefef'}
-                isVisible={isAllPopVisible}
-                options={ { position: [ 0, 0 ] , pixelOffset: [0,-30]} } 
-
-                popupContent={
-                    <div className="dfwsefwef">
-                        <h4> Title dfsdf</h4>
-                        { <p><strong>Address:</strong> dfsedfsef </p> }
-                        { <p><strong>Geo (lat,long):</strong> </p> }
-                        { <p><strong>Phone:</strong> </p>}
-                        { <p><strong>Website:</strong> </p>}
-                    </div>
-                }
-            /> */}
-
             </AzureMap>
         </div>
     );

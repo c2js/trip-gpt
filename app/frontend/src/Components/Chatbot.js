@@ -52,8 +52,8 @@ const Chatbot = () => {
 
     if (chatState === 'chat') {
         
-      const response = await fetch(`${process.env.REACT_APP_BACKEND_ENDPOINT}chat/`, {
-        //mode: 'no-cors', 
+      const response = await fetch(`${process.env.REACT_APP_BACKEND_ENDPOINT}chat`, {
+        // mode: 'no-cors', 
         method: 'POST',
         headers: {
           'Content-Type': 'application/json'
