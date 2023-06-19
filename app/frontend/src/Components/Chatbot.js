@@ -14,7 +14,9 @@ const Chatbot = () => {
 
   const [history, setHistory] = useState([]);
   const [message, setMessage] = useState('');
+  const [chatState, setChatState] = useState('chat'); //chat, preparing, result
   const [loading, setLoading] = useState(false);
+  const [preparing, setPreparing] = useState(false);
   const [showWarning, setShowWarning] = useState(false);
   const [sendBtnDisabled, setSendBtnDisabled] = useState(false);
   const inputRef = useRef(null);
@@ -29,11 +31,15 @@ const Chatbot = () => {
     setHistory([]);
     setMessage('');
     setLoading(false);
+    setPreparing(false);
     setShowWarning(false);
+    setChatState('chat');
     chatInputRef.current.disabled = false;
     setSendBtnDisabled(false);
   }
 
+  let travel_summary = null;
+  
   const sendMessage = async () => {
     if (!message) return;
     
@@ -43,35 +49,58 @@ const Chatbot = () => {
     console.log(JSON.stringify( { role: 'user', content: message} ));
     setMessage('');
     
-    const response = await fetch(process.env.REACT_APP_BACKEND_ENDPOINT, {
-      //mode: 'no-cors', 
-      method: 'POST',
-      headers: {
-        'Content-Type': 'application/json'
-      },
-      body: JSON.stringify(  [...history, { role: 'user', content: message}] )
-    });
 
-    const botchat = await response.json();
-    console.log(botchat);
+    if (chatState === 'chat') {
+        
+      const response = await fetch(`${process.env.REACT_APP_BACKEND_ENDPOINT}chat/`, {
+        //mode: 'no-cors', 
+        method: 'POST',
+        headers: {
+          'Content-Type': 'application/json'
+        },
+        body: JSON.stringify(  [...history, { role: 'user', content: message}] )
+      });
 
-    if ('is_end' in botchat) {
-      setPOI(botchat);
+      const botchat = await response.json();
+      console.log(botchat);
+
       setHistory(prevstate => [...prevstate, { role: 'assistant', content: botchat['choices'][0]['message']['content'] }]);
-      setLoading(false);
-      setShowWarning(true);
-      chatInputRef.current.disabled = true;
-      setSendBtnDisabled(true);
+      if ('is_chat_end' in botchat ){
+        travel_summary = botchat['travel_summary'];
+
+        setLoading(false);
+        setChatState('preparing');
+        setPreparing(true);
+        chatInputRef.current.disabled = true;
+        setSendBtnDisabled(true);
+
       
+        //preparing
+        const respPrep = await fetch(`${process.env.REACT_APP_BACKEND_ENDPOINT}chat/prepare`, {
+          method: 'POST',
+          headers: {
+            'Content-Type': 'application/json'
+          },
+          body: JSON.stringify(  {"travel_summary": travel_summary} )
+        });
+
+        const respResult = await respPrep.json();
+        console.log(respResult);
+        setHistory(prevstate => [...prevstate, { role: 'assistant', content: respResult['choices'][0]['message']['content'] }]);
+        setPreparing(false);
+        setChatState('result');
+        setPOI(respResult);
+        setShowWarning(true);
 
 
-      // Handle call
-    }
-    else {
-      setHistory(prevstate => [...prevstate, { role: 'assistant', content: botchat['choices'][0]['message']['content'] }]);
-      setLoading(false);
-      setShowWarning(false);
-    }
+      } //is chat end else
+      else{
+        setLoading(false);
+        setShowWarning(false);
+      }
+
+    } 
+
   };
 
   const handleKeyDown = (e) => {
@@ -101,6 +130,7 @@ const Chatbot = () => {
             </div>
           ))}
           {loading && <div className="message bot">Loading...</div>}
+          {preparing && <div className="message bot status-msg">Preparing, hang on ...</div>}
           {showWarning && <Alert severity="warning">Information generated may not be accurate. Please verify before using</Alert>}
           <div ref={inputRef}></div>
           

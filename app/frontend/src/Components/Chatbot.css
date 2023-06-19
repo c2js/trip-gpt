@@ -65,4 +65,10 @@
   transform: translateY(50%)
 }
 
-  
+.message.status-msg{
+  font-size: 12px;
+  background-color: #0095ff;
+  color: white;
+  font-size: 12px;
+  font-weight: bold;
+}
