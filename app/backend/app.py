@@ -16,7 +16,9 @@ import logging
 
 from prompt import CONV_META_PROMPT, ITINERARY_TEMPLATE
 
-logging.basicConfig(level=logging.DEBUG)
+log = logging.getLogger('travelgpt')
+log.setLevel(logging.DEBUG)
+#logging.basicConfig(level=logging.DEBUG)
 load_dotenv()
 
 openai.api_type = "azure"
@@ -44,7 +46,7 @@ maps_client = MapsSearchClient(
 @app.route('/chat', methods=['POST'])
 def chat():
     data = request.get_json()
-    logging.debug(f'/chat request.get_json(): {data}')
+    log.debug(f'/chat request.get_json(): {data}')
 
     chat = AzureChatOpenAI(deployment_name="gpt-35-turbo", openai_api_version="2023-05-15", temperature=0.0)
 
@@ -58,11 +60,11 @@ def chat():
             if '[SUMMARY]' in msg["content"]:
                 travel_summary = msg["content"]
         else:
-            logging.warning(f'Unknown role: {msg["role"]}')
+            log.warning(f'Unknown role: {msg["role"]}')
 
-    logging.debug(f'Messages: {messages}')
+    log.debug(f'Messages: {messages}')
     answer = chat.predict_messages(messages)
-    logging.info(f'ChatGPT reply: {answer}')
+    log.info(f'ChatGPT reply: {answer}')
 
     response = { "choices": [ { 'message': {"content": answer.content}} ]  }
     if 'FuuuNTASTIC' in answer.content:
@@ -74,13 +76,13 @@ def chat():
                      "travel_summary": travel_summary
                     }
 
-    logging.info(f'/chat HTTP Response: {response}')
+    log.info(f'/chat HTTP Response: {response}')
     return jsonify(response)
 
 @app.route('/chat/prepare', methods=['POST'])
 def prepare():
     data = request.get_json()
-    logging.debug(f'/chat/prepare request.get_json(): {data}')
+    log.debug(f'/chat/prepare request.get_json(): {data}')
 
 
     chat = AzureChatOpenAI(deployment_name="gpt-35-turbo", openai_api_version="2023-05-15", temperature=0.0)
@@ -91,16 +93,16 @@ def prepare():
     chain = LLMChain(llm=chat, prompt=chat_prompt, verbose=True)
     answer = chain.run(input_text=data["travel_summary"])
 
-    logging.info(f'ChatGPT Answer:\n\n{answer}\n\n')
+    log.info(f'ChatGPT Answer:\n\n{answer}\n\n')
 
     ## detect @@JSONSTART@@ & @@JSONEND@@ and extract the json. Prior to @@JSONSTART@@ is Itinerary.
     json_start = answer.find(beginJSON)
     json_end = answer.find(endJSON)
     json_str = answer[json_start+13:json_end-1]
-    logging.info(f'JSON STR:***{json_str}***')
+    log.info(f'JSON STR:***{json_str}***')
     json_obj = json.loads(json_str)
     itinerary = answer[:json_start]
-    logging.info(f'Itinerary:\n\n{itinerary}\n\n')
+    log.info(f'Itinerary:\n\n{itinerary}\n\n')
 
 
     response = {}
@@ -117,19 +119,19 @@ def prepare():
         elif p['type'] == "rest":
             all_poi_type.append('restaurant')
         else:
-            logging.info(f'Unknown POI type: {p["type"]}')
+            log.info(f'Unknown POI type: {p["type"]}')
     
 
     city_result = maps_client.fuzzy_search(city, entity_type="Municipality")
     city_result_dict = city_result.results[0].as_dict()
-    logging.debug(f'City Result:{city_result_dict}')
+    log.debug(f'City Result:{city_result_dict}')
 
     city_lat = city_result_dict["position"]["lat"]
     city_long = city_result_dict["position"]["lon"]
     
     for poi, poi_type in zip(all_poi, all_poi_type):
         querypoi = poi_type + ' ' + poi + ', ' + city
-        logging.info(f'Query POI: ----- {querypoi} ------')
+        log.info(f'Query POI: ----- {querypoi} ------')
         try:
             result = maps_client.search_point_of_interest(querypoi, coordinates=(city_lat, city_long), radius_in_meters=100000, top=1)
             r = result.results[0]
@@ -143,14 +145,14 @@ def prepare():
             if r.point_of_interest.url:
                 itinerary = itinerary.replace(poi, f'[{poi}](https://{r.point_of_interest.url})')
         except Exception as e:
-            logging.error(f'Az Map Error: {e}')                
+            log.error(f'Az Map Error: {e}')                
             continue
 
     response = { "choices": [ { 'message': {"content": itinerary}} ],
                  "is_end": True,
                  "pois": poiinfo
                 }
-    logging.debug(f'/chat/prepare HTTP Response: {response}')
+    log.debug(f'/chat/prepare HTTP Response: {response}')
     return jsonify(response)
 
 
