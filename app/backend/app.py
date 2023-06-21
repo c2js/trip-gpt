@@ -43,7 +43,7 @@ maps_client = MapsSearchClient(
 )
 
 @app.route('/')
-def main():
+def index():
     return "hello world!"
 
 @app.route('/chat', methods=['POST'])
@@ -160,4 +160,5 @@ def prepare():
 
 
 if __name__ == '__main__':
-    app.run(debug=True, port=5000)
+    #app.run(debug=True, port=5000)
+    app.run()
