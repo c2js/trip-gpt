@@ -42,6 +42,9 @@ maps_client = MapsSearchClient(
    credential=AzureKeyCredential(subscription_key)
 )
 
+@app.route('/')
+def main():
+    return "hello world!"
 
 @app.route('/chat', methods=['POST'])
 def chat():
