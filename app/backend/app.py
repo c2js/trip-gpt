@@ -26,9 +26,10 @@ openai.api_base = os.getenv("OPENAI_API_BASE") # "https://<aoai_servicename>.ope
 openai.api_version = os.getenv("OPENAI_API_VERSION")
 openai.api_key = os.getenv("OPENAI_API_KEY") 
 
+REACT_BUILD_FOLDER = os.getenv("REACT_BUILD_FOLDER", 'webapp')
 
 
-app = Flask(__name__)
+app = Flask(__name__, static_folder=REACT_BUILD_FOLDER)
 
 from flask_cors import CORS, cross_origin
 cors = CORS(app, resources={r"/*": {"origins": "*"}})
@@ -42,9 +43,12 @@ maps_client = MapsSearchClient(
    credential=AzureKeyCredential(subscription_key)
 )
 
-@app.route('/')
-def index():
-    return "hello world!"
+@app.route("/", defaults={"path": "index.html"})
+@app.route("/<path:path>")
+def static_file(path):
+    print (path)
+    return app.send_static_file(path)
+
 
 @app.route('/chat', methods=['POST'])
 def chat():
@@ -160,5 +164,5 @@ def prepare():
 
 
 if __name__ == '__main__':
-    #app.run(debug=True, port=5000)
-    app.run()
+    app.run(debug=True, port=5000)
+    #app.run()

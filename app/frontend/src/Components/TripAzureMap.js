@@ -15,10 +15,9 @@ const option = {
 const TripAzureMap = () => {
     
     const { mapRef, isMapReady } = useContext(AzureMapsContext);
-    const { poi, setPOI } = useContext(DataContext);
+    const { poi } = useContext(DataContext);
     const [ isAllPopVisible, setIsAllPopVisible ]  = useState(true);
     
-    console.log(`jhazuremap`);
     console.log ({...poi} );
     console.log(`poi.is_end :${poi.is_end}`);
     
@@ -85,7 +84,6 @@ const TripAzureMap = () => {
             <AzureMapPopup
                 isVisible={ isAllPopVisible }
                 options={ { position: [ item.lon, item.lat ] , pixelOffset: [0,-30]} } 
-                //popupContent={<div style={{padding:"10px"}}>{item.name}</div>}
                 popupContent={
                     <div className="poi-popup">
                         <h4>{item.name}</h4>

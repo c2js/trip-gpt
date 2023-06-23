@@ -10,7 +10,7 @@ import Alert from '@mui/material/Alert';
 import './Chatbot.css';
 
 const Chatbot = () => {
-  const { poi, setPOI } = useContext(DataContext);
+  const { _, setPOI } = useContext(DataContext);
 
   const [history, setHistory] = useState([]);
   const [message, setMessage] = useState('');
@@ -51,9 +51,7 @@ const Chatbot = () => {
     
 
     if (chatState === 'chat') {
-        
       const response = await fetch(`${process.env.REACT_APP_BACKEND_ENDPOINT}chat`, {
-        // mode: 'no-cors', 
         method: 'POST',
         headers: {
           'Content-Type': 'application/json'
@@ -61,12 +59,12 @@ const Chatbot = () => {
         body: JSON.stringify(  [...history, { role: 'user', content: message}] )
       });
 
-      const botchat = await response.json();
-      console.log(botchat);
+      const botResp = await response.json();
+      console.log(botResp);
 
-      setHistory(prevstate => [...prevstate, { role: 'assistant', content: botchat['choices'][0]['message']['content'] }]);
-      if ('is_chat_end' in botchat ){
-        travel_summary = botchat['travel_summary'];
+      setHistory(prevstate => [...prevstate, { role: 'assistant', content: botResp['choices'][0]['message']['content'] }]);
+      if ('is_chat_end' in botResp ){
+        travel_summary = botResp['travel_summary'];
 
         setLoading(false);
         setChatState('preparing');
