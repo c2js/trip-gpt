@@ -1,17 +1,13 @@
 # TripGPT
 
-TripGPT is a demostrating how to use LLM, Azure OpenAI Service to generate a city trip itinenary in conversation style. Underneath is using Azure Map & Azure OpenAI Service as the core component.
+TripGPT demonstrates the utilization of the Language Model (LLM) and Azure OpenAI Service to generate city trip itineraries in a conversational style. The underlying architecture incorporates Azure Map and Azure OpenAI Service as its fundamental components.
 
-
-## Video
 [![TripGPT](/assets/tripgpt_demo.mp4)](/assets/tripgpt_demo.mp4)
 
 ## Table of Contents
 
 - [TripGPT](#tripgpt)
-  - [Video](#video)
   - [Table of Contents](#table-of-contents)
-  - [Project Description](#project-description)
   - [Requirement](#requirement)
   - [Run Locally](#run-locally)
     - [Backend](#backend)
@@ -21,18 +17,16 @@ TripGPT is a demostrating how to use LLM, Azure OpenAI Service to generate a cit
     - [Frontend](#frontend-1)
   - [Deploy to Azure App Service](#deploy-to-azure-app-service)
     - [Build the React app](#build-the-react-app)
+  - [Note ⚠️](#note-️)
   - [Contributing](#contributing)
 
-## Project Description
-
-This repository contains the frontend and backend components of the project. The frontend is developed using React, while the backend is built with Python Flask.
 
 ## Requirement
 * Develop with `Python 3.9` , may use lower version of Python.
 * `Nodejs 16`
-* [Azure Maps](https://learn.microsoft.com/en-us/azure/azure-maps/how-to-manage-account-keys) account & [Azure Maps Key](https://learn.microsoft.com/en-us/azure/azure-maps/how-to-manage-authentication#view-authentication-details)
-  > &#x26a0;&#xfe0f; There are several way Azure Map provided for authentication (Shared Key, Azure AD & SAS Token). This repo is using Shared Key which might not be the best practise for production environment. !! KEY IS EXPOSE !! . Refer this [Manage authentication in Azure Maps](https://learn.microsoft.com/en-us/azure/azure-maps/how-to-manage-authentication#choose-an-authentication-and-authorization-scenario) for more details.
-* Azure OpenAI Service / OpenAI key. Require gpt-35-turbo or gpt4 model. If doesn't have Azure OpenAI Service access, read [here](https://learn.microsoft.com/en-us/legal/cognitive-services/openai/limited-access)
+* [Azure Maps Account](https://learn.microsoft.com/en-us/azure/azure-maps/how-to-manage-account-keys)  & [Azure Maps Key](https://learn.microsoft.com/en-us/azure/azure-maps/how-to-manage-authentication#view-authentication-details)
+  > &#x26a0;&#xfe0f; Azure Maps offers several authentication methods, including Shared Key, Azure AD, and SAS Token. This repository uses the Shared Key method, which may not be the best practice for production environments. Please note that the **KEY IS EXPOSED**. For more information, refer to [Manage authentication in Azure Maps](https://learn.microsoft.com/en-us/azure/azure-maps/.
+* Azure OpenAI Service / OpenAI key: The gpt-3.5-turbo or gpt-4 model is required. If you do not have access to Azure OpenAI Service, please [read here](https://learn.microsoft.com/en-us/legal/cognitive-services/openai/limited-access).
 ## Run Locally
 
 To install and run the project locally, follow these steps:
@@ -96,7 +90,7 @@ Without changing the Flask port, you can set `REACT_APP_BACKEND_ENDPOINT=http://
 You can deploy this solution Linux App Service. You may follow [Quickstart: Deploy a Python (Django or Flask) web app to Azure App Service](https://learn.microsoft.com/en-us/azure/app-service/quickstart-python?tabs=flask%2Cwindows%2Cazure-cli%2Cvscode-deploy%2Cdeploy-instructions-azportal%2Cterminal-bash%2Cdeploy-instructions-zip-azcli)
 
 ### Build the React app
-Need to build the react app and place it under a folder in backend app. Default folder name: `webapp` . Can overwrite the folder by specifying the path in environment variable `REACT_BUILD_FOLDER`. It should be relative to backend folder. 
+To build the React app and add it to the backend app, create a folder called `webapp` by default. If you want to use a different folder name, you can specify the path in the `REACT_BUILD_FOLDER` environment variable. This path should be relative to the backend folder.
 
 In **Windows**, set the `package.json` "build" as follow to specify the destination of the build folder. (default)
 ```json
@@ -115,8 +109,12 @@ In **Linux**, set the `package.json` "build" as follow to specify the destinatio
 }
 ```
 
-To deploy, you may use [Azure CLI to upload zip](https://learn.microsoft.com/en-us/azure/app-service/deploy-zip?tabs=cli), [Azure DevOps CI/CD](https://learn.microsoft.com/en-us/azure/app-service/deploy-azure-pipelines?tabs=yaml) or using VSCode extension (Azure Tools). I found it is easier to deploy via this method for quick test.
+To deploy, you may use [Azure CLI to upload zip](https://learn.microsoft.com/en-us/azure/app-service/deploy-zip?tabs=cli), [Azure DevOps CI/CD](https://learn.microsoft.com/en-us/azure/app-service/deploy-azure-pipelines?tabs=yaml) or using VSCode extension (Azure Tools), it is easier to deploy via this method for quick start.
 
+
+## Note &#x26a0;&#xfe0f;
+> * Azure Maps does not encompass all points of interest, including but not limited to attractions, hotels, and restaurants.
+> * The generated itinerary is based on information available up to the date the LLM model was trained. Please note that the accuracy and validity of the information may vary, and we strongly advise validating it before relying on it for any practical purposes.
 ## Contributing
 
 Contributions are welcome! If you find any issues or have suggestions, please feel free to create an issue or submit a pull request.
