@@ -2,7 +2,7 @@
 
 TripGPT demonstrates using Azure OpenAI Service to generate city trip itineraries in a conversational style. The underlying architecture incorporates Azure Map and Azure OpenAI Service as its fundamental components.
 
-[![TripGPT](/assets/tripgpt_demo.mp4)](/assets/tripgpt_demo.mp4)
+[![TripGPT](/assets/tripgpt_demo.gif)](/assets/tripgpt_demo.gif)
 
 ## Table of Contents
 
