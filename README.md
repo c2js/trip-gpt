@@ -22,7 +22,7 @@ TripGPT demonstrates using Azure OpenAI Service to generate city trip itinerarie
 
 
 ## Requirement
-* Develop with `Python 3.9` , may use lower version of Python.
+* Develop with `Python 3.9`.
 * `Nodejs 16`
 * [Azure Maps Account](https://learn.microsoft.com/en-us/azure/azure-maps/how-to-manage-account-keys)  & [Azure Maps Key](https://learn.microsoft.com/en-us/azure/azure-maps/how-to-manage-authentication#view-authentication-details)
   > &#x26a0;&#xfe0f; Azure Maps offers several authentication methods, including Shared Key, Azure AD, and SAS Token. This repository uses the Shared Key method, which may not be the best practice for production environments. Please note that the **KEY IS EXPOSED**. For more information, refer to [Manage authentication in Azure Maps](https://learn.microsoft.com/en-us/azure/azure-maps/.
@@ -34,13 +34,13 @@ To install and run the project locally, follow these steps:
 1. Clone the repository:
 
    ```shell
-   git clone https://github.com/your-username/repository-name.git
+   git clone https://github.com/c2js/trip-gpt.git
    ```
 ### Backend
 2. Navigate to the project directory -> app -> backend:
 
    ```shell
-   cd repository-name/app/backend
+   cd trip-gpt/app/backend
    ```
 
 3. Install the required dependencies for the backend:
@@ -56,11 +56,11 @@ To install and run the project locally, follow these steps:
 ### Frontend
 5. Open another shell, navigate to frontend
    ```shell
-   cd repository-name/app/frontend
+   cd trip-gpt/app/frontend
    ```
 6. Copy `.env.sample` as `.env` . Use this to set the environment variable for Azure Map Key (if using key as authentication), the backend endpoint
    ```shell
-   cd repository-name/app/frontend
+   cd trip-gpt/app/frontend
    ```
 7. Run the follow command will start the development server for the React app. By default is listening to port 3000
    ```shell
